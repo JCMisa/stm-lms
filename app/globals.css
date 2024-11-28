@@ -70,3 +70,57 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* Headings */
+.html-ai h1 {
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #333;
+}
+.html-ai h2 {
+  font-size: 30px;
+  font-weight: bold;
+  margin-bottom: 18px;
+  color: #444;
+}
+.html-ai h3 {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 16px;
+  color: #555;
+}
+.html-ai h4 {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 14px;
+  color: #666;
+}
+.html-ai h5 {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 12px;
+  color: #777;
+} /* Paragraphs */
+.html-ai p {
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 10px;
+  color: #000;
+} /* Lists */
+.html-ai ul,
+.html-ai ol {
+  margin-bottom: 20px;
+  padding-left: 20px;
+}
+.html-ai ul .html-ai li,
+.html-ai ol .html-ai li {
+  margin-bottom: 5px;
+} /* Links */
+.html-ai a {
+  color: #0066cc;
+  text-decoration: none;
+}
+.html-ai a:hover {
+  text-decoration: underline;
+}

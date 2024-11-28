@@ -14,6 +14,7 @@ import { useRouter } from 'next/navigation'
 import { generateNote } from '@/utils/AIModel'
 import { ChapterNotes } from '@/utils/schema'
 import { db } from '@/utils/db'
+import { parseStringify } from '@/lib/utils'
 
 const CreatePage = () => {
     const { user } = useUser();
@@ -50,10 +51,14 @@ const CreatePage = () => {
                 let index = 0
                 // generate notes for each chapter with ai
                 Chapters.forEach(async (chapter) => {
-                    const PROMPT = `generate exam material detail content for each chapter, make sure to include all topic point in the content,    make sure to give content in HTML format (Do not add HTML tag, Head, Body, title tag), the chapters: ${JSON.stringify(chapter)}
-                }`
+                    //     const PROMPT = `generate exam material detail content for each chapter, make sure to include all topic point in the content, make sure to give content in HTML format (Do not add HTML tag, Head, Body, title tag), the chapters: ${JSON.stringify(chapter)}
+                    // }`
+
+                    // const PROMPT = `generate an HTML format discussion about ${chapter?.chapterTitle} ${chapter?.chapterDescription}, and base the discussion on the topics inside ${chapter?.chapterTopics}, return a response in HTML format`
+
+                    const PROMPT = `based on chapter title: ${chapter?.chapterTitle}, chapter description: ${chapter?.chapterDescription}, and based on each and every chapter topic in ${chapter?.chapterTopics} array, make sure to provide detailed discussion for each topic in ${chapter?.chapterTopics}, make sure to return only one property named content that contains the HTML format of the discussion (Do not add HTML tag, Head, Body, title tag), and be cautious on adding escape sequences to avoid error.`
                     const result = await generateNote.sendMessage(PROMPT);
-                    const aiResp = JSON.parse(result?.response?.text());
+                    const aiResp = parseStringify(result?.response?.text());
 
                     await db.insert(ChapterNotes).values({
                         courseId: courseId,
@@ -72,6 +77,7 @@ const CreatePage = () => {
             toast(
                 <p className='text-sm text-red-500 font-bold'>Internal error occured while saving course</p>
             )
+            console.log('generate ai response error: ', error)
         } finally {
             setIsLoading(false);
         }

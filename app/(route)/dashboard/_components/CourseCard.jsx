@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import Image from 'next/image'
+import Link from 'next/link'
 import React from 'react'
 
 const CourseCard = ({ course }) => {
@@ -19,9 +20,11 @@ const CourseCard = ({ course }) => {
                 </div>
 
                 <div className='mt-3 flex justify-end'>
-                    <Button>
-                        View
-                    </Button>
+                    <Link href={`/course/${course?.courseId}`}>
+                        <Button>
+                            View
+                        </Button>
+                    </Link>
                 </div>
             </div>
         </div>
