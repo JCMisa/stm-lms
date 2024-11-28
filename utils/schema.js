@@ -1,5 +1,6 @@
 import {
     boolean,
+    json,
     pgTable,
     serial,
     varchar,
@@ -11,3 +12,14 @@ export const Users = pgTable("users", {
     email: varchar("email").notNull(),
     isMember: boolean().default(false)
 });
+
+export const Courses = pgTable("courses", {
+    id: serial("id").primaryKey(),
+    courseId: varchar("courseId").unique(),
+    courseType: varchar("courseType"),
+    topic: varchar("topic"),
+    difficultyLevel: varchar("difficultyLevel").default('easy'),
+    courseLayout: json("courseLayout"),
+    createdBy: varchar("createdBy"),
+    createdAt: varchar("createdAt"),
+})

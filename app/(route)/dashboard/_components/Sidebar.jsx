@@ -37,7 +37,7 @@ const Sidebar = () => {
             </div>
 
             <div className='mt-10'>
-                <Button className="w-full">+ Create New</Button>
+                <Link href="/create" className="w-full bg-primary hover:bg-primary-100 transition-all flex items-center justify-center py-3 px-5 rounded-lg text-white">+ Create New</Link>
 
                 <div className='mt-5'>
                     {
