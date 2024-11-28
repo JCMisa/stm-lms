@@ -1,14 +1,21 @@
 "use client"
 
 import { Progress } from '@/components/ui/progress'
-import { Button } from '@/components/ui/button'
 import { LayoutDashboard, Shield, UserCircle } from 'lucide-react'
 import Image from 'next/image'
-import { usePathname } from 'next/navigation'
-import React from 'react'
+import { usePathname, useRouter } from 'next/navigation'
+import React, { useContext, useEffect, useState } from 'react'
 import Link from 'next/link'
+import { CourseCountContext } from '@/app/_context/CourseCountContext'
+import { Courses, Users } from '@/utils/schema'
+import { db } from '@/utils/db'
+import { useUser } from '@clerk/nextjs'
+import { eq } from 'drizzle-orm'
 
 const Sidebar = () => {
+    const { user } = useUser();
+    const { totalCourse } = useContext(CourseCountContext);
+
     const menuList = [
         {
             name: 'Dashboard',
@@ -28,6 +35,44 @@ const Sidebar = () => {
     ]
 
     const pathname = usePathname();
+    const router = useRouter();
+
+    const [isSubscribed, setIsSubscribed] = useState(false);
+    const [totalCourses, setTotalCourses] = useState(0)
+
+    const isUserSubscribed = async () => {
+        const result = await db
+            .select()
+            .from(Users)
+            .where(
+                eq(Users?.email, user?.primaryEmailAddress?.emailAddress)
+            );
+
+        if (result.length > 0) {
+            if (result[0]?.isMember === true) {
+                // if yung current user ay true yung isMember property then, 
+                setIsSubscribed(true);
+            }
+
+        }
+    }
+
+    const checkTotalCourses = async () => {
+        const result = await db
+            .select()
+            .from(Courses)
+            .where(
+                eq(Courses.createdBy, user?.primaryEmailAddress?.emailAddress)
+            )
+
+        if (result?.length > 0) {
+            setTotalCourses(result?.length)
+        }
+    }
+
+    useEffect(() => {
+        user && isUserSubscribed();
+    }, [user])
 
     return (
         <div className='h-screen shadow-md p-5'>
@@ -37,12 +82,18 @@ const Sidebar = () => {
             </div>
 
             <div className='mt-10'>
-                <Link href="/create" className="w-full bg-primary hover:bg-primary-100 transition-all flex items-center justify-center py-3 px-5 rounded-lg text-white">+ Create New</Link>
+                {
+                    ((isSubscribed && totalCourse > 5) ||
+                        (isSubscribed && totalCourse <= 5) ||
+                        (!isSubscribed && totalCourse <= 5)) && (
+                        <Link href="/create" className="w-full bg-primary hover:bg-primary-100 transition-all flex items-center justify-center py-3 px-5 rounded-lg text-white">+ Create New</Link>
+                    )
+                }
 
                 <div className='mt-5'>
                     {
                         menuList.map((menu, index) => (
-                            <div key={index} className={`flex items-center gap-5 p-3 hover:bg-slate-200 rounded-lg cursor-pointer transition-all mt-3 ${pathname === menu.path && "bg-slate-200 shadow-md border border-l-primary rounded-none"}`}>
+                            <div onClick={() => router.push(menu.path)} key={index} className={`flex items-center gap-5 p-3 hover:bg-slate-200 rounded-lg cursor-pointer transition-all mt-3 ${pathname === menu.path && "bg-slate-200 shadow-md border border-l-primary rounded-none"}`}>
                                 <menu.icon />
                                 <h2>{menu.name}</h2>
                             </div>
@@ -52,10 +103,10 @@ const Sidebar = () => {
             </div>
 
             <div className='border p-3 bg-slate-200 rounded-lg absolute bottom-10 w-[85%]'>
-                <h2 className='text-lg mb-2'>Available Credits: 5</h2>
-                <Progress value={33} />
-                <h2 className='text-sm'>1 out of 5 credits used</h2>
-                <Link href={'/dashboard/upgrade'} className='text-primary text-xs mt-3'>Upgrade to create more</Link>
+                <h2 className='text-lg mb-2'>Available Credits: {(isSubscribed ? 100 : 5) - totalCourse}</h2>
+                <Progress value={(totalCourse / (isSubscribed ? 100 : 5)) * 100} />
+                <h2 className='text-sm'>{totalCourse} out of {isSubscribed ? 100 : 5} credits used</h2>
+                {!isSubscribed && <Link href={'/dashboard/upgrade'} className='text-primary text-xs mt-3'>Upgrade to create more</Link>}
             </div>
         </div>
     )

@@ -12,7 +12,8 @@ export const Users = pgTable("users", {
     id: serial("id").primaryKey(),
     name: varchar("name").notNull(),
     email: varchar("email").notNull(),
-    isMember: boolean().default(false)
+    isMember: boolean().default(false),
+    customerId: varchar("customerId"),
 });
 
 export const Courses = pgTable("courses", {
@@ -31,4 +32,11 @@ export const ChapterNotes = pgTable("chapterNotes", {
     courseId: varchar("courseId").notNull(),
     chapterId: integer("chapterId"),
     notes: text("notes"),
+})
+
+export const PaymentRecord = pgTable("paymentRecord", {
+    id: serial("id").primaryKey(),
+    customerId: varchar("customerId"),
+    sessionId: varchar("sessionId"),
+    createdAt: varchar("createdAt"),
 })

@@ -2,10 +2,11 @@
 
 import { useUser } from '@clerk/nextjs'
 import axios from 'axios'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import CourseCard from './CourseCard'
 import { Button } from '@/components/ui/button'
 import { LoaderCircle } from 'lucide-react'
+import { CourseCountContext } from '@/app/_context/CourseCountContext'
 
 const CourseList = () => {
     const { user } = useUser();
@@ -13,11 +14,14 @@ const CourseList = () => {
     const [courseList, setCourseList] = useState([])
     const [loading, setLoading] = useState(false);
 
+    const { setTotalCourse } = useContext(CourseCountContext);
+
     const getCourseList = async () => {
         setLoading(true);
         const result = await axios.post('/api/courses', { createdBy: user?.primaryEmailAddress?.emailAddress })
         setCourseList(result?.data?.result)
         setLoading(false)
+        setTotalCourse(result?.data?.result?.length)
     }
 
     useEffect(() => {
