@@ -11,6 +11,9 @@ import moment from 'moment'
 import { toast } from 'sonner'
 import { LoaderCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { generateNote } from '@/utils/AIModel'
+import { ChapterNotes } from '@/utils/schema'
+import { db } from '@/utils/db'
 
 const CreatePage = () => {
     const { user } = useUser();
@@ -40,8 +43,28 @@ const CreatePage = () => {
             })
             if (result) {
                 console.log("ai response: ", result?.data?.result?.Courses)
+                const courseId = result.data?.result?.Courses?.courseId
+                console.log("ai response courseId: ", result?.data?.result?.Courses?.courseId)
+                const Chapters = result?.data?.result?.Courses?.courseLayout?.courseChapters
+                console.log("ai response course chapters: ", result?.data?.result?.Courses?.courseLayout?.courseChapters)
+                let index = 0
+                // generate notes for each chapter with ai
+                Chapters.forEach(async (chapter) => {
+                    const PROMPT = `generate exam material detail content for each chapter, make sure to include all topic point in the content,    make sure to give content in HTML format (Do not add HTML tag, Head, Body, title tag), the chapters: ${JSON.stringify(chapter)}
+                }`
+                    const result = await generateNote.sendMessage(PROMPT);
+                    const aiResp = JSON.parse(result?.response?.text());
+
+                    await db.insert(ChapterNotes).values({
+                        courseId: courseId,
+                        chapterId: index,
+                        notes: aiResp
+                    })
+                    index = index + 1;
+                });
+
                 toast(
-                    <p className='text-sm text-green-500 font-bold'>Course Layout Generated Successfully</p>
+                    <p className='text-sm text-green-500 font-bold'>Course generated successfully</p>
                 )
                 router.replace('/dashboard')
             }

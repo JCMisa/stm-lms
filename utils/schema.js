@@ -1,8 +1,10 @@
 import {
     boolean,
+    integer,
     json,
     pgTable,
     serial,
+    text,
     varchar,
 } from "drizzle-orm/pg-core";
 
@@ -22,4 +24,11 @@ export const Courses = pgTable("courses", {
     courseLayout: json("courseLayout"),
     createdBy: varchar("createdBy"),
     createdAt: varchar("createdAt"),
+})
+
+export const ChapterNotes = pgTable("chapterNotes", {
+    id: serial("id").primaryKey(),
+    courseId: varchar("courseId").notNull(),
+    chapterId: integer("chapterId"),
+    notes: text("notes"),
 })
