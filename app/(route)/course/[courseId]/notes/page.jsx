@@ -1,7 +1,6 @@
 "use client"
 
 import { Button } from '@/components/ui/button'
-import { parseStringify } from '@/lib/utils'
 import { db } from '@/utils/db'
 import { ChapterNotes } from '@/utils/schema'
 import { eq } from 'drizzle-orm'
@@ -47,7 +46,7 @@ const ViewChapterNotes = () => {
                 {
                     notes[stepCount] && notes[stepCount].notes ? (
                         <div className='html-ai' dangerouslySetInnerHTML={{ __html: parseContent(notes[stepCount]?.notes)?.content }} />
-                    ) : (<p className='text-2xl font-bold'>Conratulations! You&apos;ve Completed the Course 🎉</p>)
+                    ) : (<p className='text-2xl font-bold'>Congratulations! You&apos;ve Completed this Course 🎉</p>)
                 }
                 {
                     notes?.length === stepCount && (

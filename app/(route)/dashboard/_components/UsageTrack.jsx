@@ -16,7 +16,7 @@ const UsageTrack = () => {
     const router = useRouter();
 
     const { totalCourse, setTotalCourse } = useContext(CourseCountContext);
-    const [maxWords, setMaxWords] = useState(5);
+    const [maxCourse, setMaxCourse] = useState(5);
 
     const isUserSubscribed = async () => {
         const result = await db
@@ -30,7 +30,7 @@ const UsageTrack = () => {
             if (result[0]?.isMember === true) {
                 // if yung current user ay true yung isMember property then, 
                 setUserSubscription(true);
-                setMaxWords(1000);
+                setMaxCourse(1000);
             }
 
         }
@@ -48,7 +48,7 @@ const UsageTrack = () => {
             );
 
         if (result) {
-            setTotalUsage(result.length);
+            setTotalCourse(result.length);
         }
     };
 
@@ -72,9 +72,9 @@ const UsageTrack = () => {
                     </Button>
                 </div>
 
-                <Progress value={(totalUsage / maxWords) * 100} />
+                <Progress value={(totalCourse / maxCourse) * 100} />
                 <h2 className="text-xs my-2">
-                    {totalUsage}/{maxWords} credits used
+                    {totalCourse}/{maxCourse} credits used
                 </h2>
             </div>
             <Button

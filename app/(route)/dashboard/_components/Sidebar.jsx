@@ -6,7 +6,6 @@ import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import React, { useContext, useEffect, useState } from 'react'
 import Link from 'next/link'
-import { CourseCountContext } from '@/app/_context/CourseCountContext'
 import { Courses, Users } from '@/utils/schema'
 import { db } from '@/utils/db'
 import { useUser } from '@clerk/nextjs'
@@ -14,7 +13,6 @@ import { eq } from 'drizzle-orm'
 
 const Sidebar = () => {
     const { user } = useUser();
-    const { totalCourse } = useContext(CourseCountContext);
 
     const menuList = [
         {
@@ -72,20 +70,21 @@ const Sidebar = () => {
 
     useEffect(() => {
         user && isUserSubscribed();
+        user && checkTotalCourses();
     }, [user])
 
     return (
         <div className='h-screen shadow-md p-5'>
-            <div className='flex items-center gap-2'>
+            <Link href={'/'} className='flex items-center gap-2'>
                 <Image src={'/logo.svg'} alt='logo' width={1000} height={1000} className='w-10 h-10' />
                 <p className='font-bold text-2xl'>STM <span className='text-primary'>LMS</span></p>
-            </div>
+            </Link>
 
             <div className='mt-10'>
                 {
-                    ((isSubscribed && totalCourse > 5) ||
-                        (isSubscribed && totalCourse <= 5) ||
-                        (!isSubscribed && totalCourse <= 5)) && (
+                    ((isSubscribed && totalCourses >= 3) ||
+                        (isSubscribed && totalCourses < 3) ||
+                        (!isSubscribed && totalCourses < 3)) && (
                         <Link href="/create" className="w-full bg-primary hover:bg-primary-100 transition-all flex items-center justify-center py-3 px-5 rounded-lg text-white">+ Create New</Link>
                     )
                 }
@@ -103,9 +102,9 @@ const Sidebar = () => {
             </div>
 
             <div className='border p-3 bg-slate-200 rounded-lg absolute bottom-10 w-[85%]'>
-                <h2 className='text-lg mb-2'>Available Credits: {(isSubscribed ? 100 : 5) - totalCourse}</h2>
-                <Progress value={(totalCourse / (isSubscribed ? 100 : 5)) * 100} />
-                <h2 className='text-sm'>{totalCourse} out of {isSubscribed ? 100 : 5} credits used</h2>
+                <h2 className='text-lg mb-2'>Available Credits: {(isSubscribed ? 100 : 3) - totalCourses}</h2>
+                <Progress value={(totalCourses / (isSubscribed ? 100 : 3)) * 100} />
+                <h2 className='text-sm'>{totalCourses} out of {isSubscribed ? 100 : 3} credits used</h2>
                 {!isSubscribed && <Link href={'/dashboard/upgrade'} className='text-primary text-xs mt-3'>Upgrade to create more</Link>}
             </div>
         </div>
