@@ -23,6 +23,7 @@ const UpgradePage = () => {
         user && getUserDetails();
     }, [user])
 
+    // method to open the stripe page and make payment
     const onCheckoutClick = async () => {
         try {
             const result = await axios.post('/api/payment', {
