@@ -1,4 +1,4 @@
-import Contact from "@/components/custom/Contact";
+// import Contact from "@/components/custom/Contact";
 import Footer from "@/components/custom/Footer";
 import Header from "@/components/custom/Header";
 import Hero from "@/components/custom/Hero";
@@ -10,7 +10,7 @@ export default function Home() {
       <Header />
       <Hero />
       <HowItWorks />
-      <Contact />
+      {/* <Contact /> */}
       <Footer />
     </div>
   );
